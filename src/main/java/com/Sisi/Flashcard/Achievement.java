@@ -1,8 +1,8 @@
 package com.Sisi.Flashcard;
 public enum Achievement {
-    FAST_LEARNER("Нэг тойрогт дундажаар 5 секундээс доош хугацаанд хариулсан."),
-    CORRECT("Сүүлийн тойрогт бүх карт зөв хариулсан."),
-    REPEAT("Нэг картад дор хаяж 3 удаа зөв хариулсан."),
+    FAST_LEARNER("Neg asuultand dundajaar 5 secundees doosh hugatsaand hariulsan."),
+    CORRECT("Suuliin toirogt buh card-d zuv hariulsan."),
+    REPEAT("Neg card d dor hayj 3 udaa zuv hariulsan."),
     CONFIDENT("");
 private final String description;
 Achievement(String description){

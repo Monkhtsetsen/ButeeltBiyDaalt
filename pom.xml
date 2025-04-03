@@ -41,6 +41,9 @@
                         <arguments>
                             <argument>mycards.txt</argument>
                         </arguments>
+                        <jvmArguments>
+                            <jvmArgument>-Dfile.encoding=UTF-8</jvmArgument>
+                        </jvmArguments>
                     </configuration>
                 </execution>
             </executions>

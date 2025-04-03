@@ -3,7 +3,8 @@ package com.Sisi.Flashcard;
 import org.apache.commons.cli.*;
 
 import java.io.BufferedReader;
-import java.io.FileReader;
+import java.io.InputStreamReader;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,14 +15,14 @@ public class FlashcardApp {
 
     private static List<Flashcard> loadCards(String filename) throws IOException {
         List<Flashcard> cards = new ArrayList<>();
-        try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(filename), "UTF-8")) ){
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(":");
                 if (parts.length == 2) {
                     cards.add(new Flashcard(parts[0].trim(), parts[1].trim()));
                 } else {
-                    System.err.println("Буруу форматтай карт: " + line);
+                    System.err.println("Buruu formattai card: " + line);
                 }
             }
         }
@@ -29,19 +30,27 @@ public class FlashcardApp {
     }
 
     public static void main(String[] args) {
+        try{
+            System.setProperty("file.encoding", "UTF-8");
+            System.setOut(new java.io.PrintStream(System.out, true, "UTF-8"));
+            System.setErr(new java.io.PrintStream(System.err, true, "UTF-8"));
+        }
+        catch(java.io.UnsupportedEncodingException e){
+            System.err.println("Error setting UTF-8 encoding for output: " + e.getMessage());
+        }
         Options options = new Options();
 
-        options.addOption(null, "help", false, "Тусламжийн мэдээлэл харуулах");
+        options.addOption(null, "help", false, "Tuslamjiin medeelel haruulah");
 
-        Option orderOption = new Option(null, "order", true, "Зохион байгуулалтын төрөл (random, worst-first, recent-mistakes-first)");
+        Option orderOption = new Option(null, "order", true, "Zohion baiguulaltiin turul (random, worst-first, recent-mistakes-first)");
         orderOption.setArgName("type");
         options.addOption(orderOption);
 
-        Option repetitionsOption = new Option(null, "repetitions", true, "Нэг картыг хэдэн удаа зөв хариулахыг шаардлага болгох");
+        Option repetitionsOption = new Option(null, "repetitions", true, "Neg card d heden udaa zuv hariulahiig shaardlaga bolgoh");
         repetitionsOption.setArgName("count");
         options.addOption(repetitionsOption);
 
-        Option invertCardsOption = new Option(null, "invertCards", false, "Картын асуулт, хариултыг сольж харуулах");
+        Option invertCardsOption = new Option(null, "invertCards", false, "Cardiin asuult hariultiig solij haruulah");
         options.addOption(invertCardsOption);
 
         CommandLineParser parser = new DefaultParser();
@@ -51,7 +60,7 @@ public class FlashcardApp {
         try {
             cmd = parser.parse(options, args);
         } catch (ParseException e) {
-            System.err.println("Командын мөрийн аргументийг танихгүй байна: " + e.getMessage());
+            System.err.println("Commandiin muriin argumentiig tanihgui baina: " + e.getMessage());
             formatter.printHelp("flashcard [options] <cards-file>", options);
             System.exit(1);
             return;
@@ -64,7 +73,7 @@ public class FlashcardApp {
 
         String[] remainingArgs = cmd.getArgs();
         if (remainingArgs.length != 1) {
-            System.err.println("Картын файлын нэрийг оруулна уу.");
+            System.err.println("Cardiin file-iin neriig oruulna uu.");
             formatter.printHelp("flashcard [options] <cards-file>", options);
             System.exit(1);
             return;
@@ -75,11 +84,11 @@ public class FlashcardApp {
         try {
             cards = loadCards(cardsFile);
             if (cards.isEmpty()) {
-                System.out.println("Картны файл хоосон байна.");
+                System.out.println("Cardnii file hooson baina.");
                 return;
             }
         } catch (IOException e) {
-            System.err.println("Картны файлыг уншихад алдаа гарлаа: " + e.getMessage());
+            System.err.println("Cardnii file iig unshihad aldaa garlaa: " + e.getMessage());
             return;
         }
 
@@ -99,7 +108,7 @@ public class FlashcardApp {
                 organizer = new RecentMistakesFirstSorter();
                 break;
             default:
-                System.err.println("Буруу зохион байгуулалтын төрөл: " + orderType + ". 'random', 'worst-first', 'recent-mistakes-first' сонголтууд байна.");
+                System.err.println("Buruu zohion baiguulaltiin turul: " + orderType + ". 'random', 'worst-first', 'recent-mistakes-first' сонголтууд байна.");
                 return;
         }
 
@@ -109,7 +118,7 @@ public class FlashcardApp {
         List<Long> roundTimings = new ArrayList<>();
         List<Achievement> achievements = new ArrayList<>();
 
-        System.out.println("Flashcard системд тавтай морилно уу!");
+        System.out.println("Flashcard systemd tavtai morilno uu!");
 
         while (!currentRoundCards.isEmpty()) {
             currentRoundCards = organizer.organizeCards(currentRoundCards);
@@ -117,7 +126,7 @@ public class FlashcardApp {
             String question = invertCards ? currentCard.getAnswer() : currentCard.getQuestion();
             String correctAnswer = invertCards ? currentCard.getQuestion() : currentCard.getAnswer();
 
-            System.out.println("\nАсуулт: " + question);
+            System.out.println("\n Asuult: " + question);
             long startTime = System.currentTimeMillis();
             String userAnswer = scanner.nextLine();
             long endTime = System.currentTimeMillis();
@@ -125,7 +134,7 @@ public class FlashcardApp {
             roundTimings.add(timeTaken);
 
             if (userAnswer.trim().equalsIgnoreCase(correctAnswer)) {
-                System.out.println("Зөв!");
+                System.out.println("Zuv!");
                 currentCard.incrementCorrectCount();
                 if (currentCard.getCorrectCount() >= repetitionsRequired) {
                     currentRoundCards.remove(0);
@@ -135,16 +144,16 @@ public class FlashcardApp {
                     currentRoundCards.add(currentCard);
                 }
             } else {
-                System.out.println("Буруу. Зөв хариулт: " + correctAnswer);
+                System.out.println("Buruu. Zuv hariult: " + correctAnswer);
                 currentCard.incrementIncorrectCount();
                 // Буруу хариулсан картыг дахин асуух картуудын жагсаалтад буцааж нэмнэ
                 currentRoundCards.remove(0);
                 currentRoundCards.add(currentCard);
             }
-            System.out.println("Таны хариулсан карт: " + currentCard);
+            System.out.println("Tanii hariulsan card: " + currentCard);
         }
 
-        System.out.println("\nТойрог дууслаа!");
+        System.out.println("\nUy duuslaa!");
 
         // Амжилтуудыг шалгах
         if (!cards.isEmpty() && cards.stream().allMatch(card -> card.getIncorrectCount() == 0)) {
@@ -166,7 +175,7 @@ public class FlashcardApp {
         }
 
         if (!achievements.isEmpty()) {
-            System.out.println("\nТаны амжилтууд:");
+            System.out.println("\nTanii gargasan amjiltuud:");
             for (Achievement achievement : achievements) {
                 System.out.println("- " + achievement.getDescription());
             }

@@ -1,37 +1,57 @@
 package com.Sisi.Flashcard;
+
 public class Flashcard {
     private String question;
     private String answer;
-    private int correctCount;
-    private int incorrectCount;
-    public Flashcard(String question, String answer){
+    private int correctCount = 0;
+    private int incorrectCount = 0;
+    private int incorrectCountForRound = 0; // Нэг тойрогт буруу хариулсан тоо
+    private long lastIncorrectTime = 0; // Хамгийн сүүлд буруу хариулсан цаг
+
+    public Flashcard(String question, String answer) {
         this.question = question;
         this.answer = answer;
-        this.correctCount = 0;
-        this.incorrectCount = 0;
     }
-    public String  getQuestion(){
+
+    public String getQuestion() {
         return question;
     }
-    public String getAnswer(){
+
+    public String getAnswer() {
         return answer;
     }
-    public int getCorrectCount(){
+
+    public int getCorrectCount() {
         return correctCount;
     }
-    public int getIncorrectCount(){
+
+    public int getIncorrectCount() {
         return incorrectCount;
     }
-    public void incrementCorrectCount(){
+
+    public int getIncorrectCountForRound() {
+        return incorrectCountForRound;
+    }
+
+    public void incrementCorrectCount() {
         this.correctCount++;
     }
-    public void incrementIncorrectCount(){
+
+    public void incrementIncorrectCount() {
         this.incorrectCount++;
+        this.lastIncorrectTime = System.currentTimeMillis(); // Буруу хариулахад цагийг шинэчилнэ
     }
+
+    public void resetIncorrectCountForRound() {
+        this.incorrectCountForRound = 0;
+    }
+
+    public long getLastIncorrectTime() {
+        return lastIncorrectTime;
+    }
+
     @Override
-    public String toString(){
-        return "Асуулт: " +question+ "Хариулт: " +answer+ "(Зөв: " +correctCount+ ", Буруу: " +incorrectCount+ ")";
-
-
+    public String toString() {
+        return "Asuult: \"" + question + "\", Hariult: \"" + answer + "\" (Zuv: " + correctCount + ", Buruu: " + incorrectCount + ")";
     }
 }
