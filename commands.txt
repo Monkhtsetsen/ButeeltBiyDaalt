@@ -1,0 +1,2 @@
+mvn exec:java@run-app
+mvn -e exec:java@run-app
