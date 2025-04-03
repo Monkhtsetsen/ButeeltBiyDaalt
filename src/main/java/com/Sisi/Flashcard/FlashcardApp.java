@@ -4,7 +4,9 @@ import org.apache.commons.cli.*;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,15 +31,23 @@ public class FlashcardApp {
         return cards;
     }
 
+
+private static void writeResultsToFile(String filename, List<Flashcard> cards, List<Achievement> achievements) {
+        try (PrintWriter writer = new PrintWriter(new FileWriter(filename))) {
+            writer.println("Hariultin ur dun:");
+            for (Flashcard card : cards) {
+                writer.println(card.toString());
+            }
+            writer.println("\nAmijiltuud:");
+            for (Achievement achievement : achievements) {
+                writer.println("- " + achievement.getDescription());
+            }
+        } catch (IOException e) {
+            System.err.println("Filed hariultiig bichihed aldaa garlaa: " + e.getMessage());
+        }
+    }
     public static void main(String[] args) {
-        try{
-            System.setProperty("file.encoding", "UTF-8");
-            System.setOut(new java.io.PrintStream(System.out, true, "UTF-8"));
-            System.setErr(new java.io.PrintStream(System.err, true, "UTF-8"));
-        }
-        catch(java.io.UnsupportedEncodingException e){
-            System.err.println("Error setting UTF-8 encoding for output: " + e.getMessage());
-        }
+      
         Options options = new Options();
 
         options.addOption(null, "help", false, "Tuslamjiin medeelel haruulah");
@@ -52,7 +62,10 @@ public class FlashcardApp {
 
         Option invertCardsOption = new Option(null, "invertCards", false, "Cardiin asuult hariultiig solij haruulah");
         options.addOption(invertCardsOption);
-
+        
+        Option resultFileOption = new Option(null, "resultFile", true, "Хариултын файлыг хадгалах нэр");
+        resultFileOption.setArgName("filename");
+        options.addOption(resultFileOption);
         CommandLineParser parser = new DefaultParser();
         HelpFormatter formatter = new HelpFormatter();
         CommandLine cmd;
@@ -154,6 +167,7 @@ public class FlashcardApp {
         }
 
         System.out.println("\nUy duuslaa!");
+        
 
         // Амжилтуудыг шалгах
         if (!cards.isEmpty() && cards.stream().allMatch(card -> card.getIncorrectCount() == 0)) {
@@ -180,7 +194,10 @@ public class FlashcardApp {
                 System.out.println("- " + achievement.getDescription());
             }
         }
-
+        String resultFileName = cmd.getOptionValue("resultFile");
+        if (resultFileName != null) {
+            writeResultsToFile(resultFileName, cards, achievements);
+        }
         scanner.close();
     }
 }

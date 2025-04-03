@@ -25,29 +25,34 @@
         </dependency>
     </dependencies>
     <build>
-    <plugins>
-        <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>exec-maven-plugin</artifactId>
-            <version>1.6.0</version>
-            <executions>
-                <execution>
-                    <id>run-app</id> <phase>process-classes</phase>
-                    <goals>
-                        <goal>java</goal>
-                    </goals>
-                    <configuration>
-                        <mainClass>com.Sisi.Flashcard.FlashcardApp</mainClass>
-                        <arguments>
-                            <argument>mycards.txt</argument>
-                        </arguments>
-                        <jvmArguments>
-                            <jvmArgument>-Dfile.encoding=UTF-8</jvmArgument>
-                        </jvmArguments>
-                    </configuration>
-                </execution>
-            </executions>
-        </plugin>
-    </plugins>
-</build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.6.0</version>
+                <executions>
+                    <execution>
+                        <id>run-app</id>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <mainClass>com.Sisi.Flashcard.FlashcardApp</mainClass>
+                    <arguments>
+                        <argument>${exec.mycards}</argument>
+                        <argument>${exec.order}</argument>
+                        <argument>${exec.repetitions}</argument>
+                        <argument>${exec.invertCards}</argument>
+                        <argument>${exec.resultFile}</argument>
+                    </arguments>
+                    <jvmArguments>
+                        <jvmArgument>-Dfile.encoding=UTF-8</jvmArgument>
+                    </jvmArguments>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>
